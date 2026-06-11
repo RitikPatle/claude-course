@@ -1,3 +1,11 @@
+# The multi-turn conversation program solves the memory problem by maintaining a list of messages inside your application.
+# Whenever the user asks a question, that question is added to the message history.
+# After Claude responds, the response is also added to the history. When the next question is asked, the entire conversation history is sent back to Claude along with the new message.
+# Because Claude receives all previous messages each time, it can understand follow-up questions and maintain context throughout the conversation.
+# This creates the experience of a real chatbot even though Claude itself does not store any conversation history.
+# In practice, most AI chat applications use this approach because it allows natural conversations where users can refer to previous answers and continue discussions without repeating information.
+
+
 import os
 
 from dotenv import load_dotenv

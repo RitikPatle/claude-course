@@ -1,3 +1,11 @@
+# This is the most basic way to use Claude. The program loads your API key and configuration from the .env file, creates an Anthropic client.
+# It sends a single user message to Claude, and prints the response.
+# Think of it as a simple question-and-answer interaction.
+# Every time you run the program, Claude receives only the current question and has no knowledge of any previous questions you may have asked.
+# This is useful for simple tasks such as generating text, answering questions, summarizing content, or testing that your API connection is working correctly.
+# The main limitation is that Claude does not remember anything between requests, so every request starts as a completely new conversation.
+
+
 import os
 
 from dotenv import load_dotenv
