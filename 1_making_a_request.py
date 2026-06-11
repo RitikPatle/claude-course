@@ -23,13 +23,15 @@ client = Anthropic(
 )
 
 try:
+    print("To ask a question please write down the text and press enter the answer will be of one scentence only.\n")
+    userQuestion = input("Que : ")
     response = client.messages.create(
         model=MODEL,
         max_tokens=MAX_TOKENS,
         messages=[
             {
                 "role": "user",
-                "content": "What is quantum computing? Answer in one sentence."
+                "content": f"${userQuestion} Answer in one sentence."
             }
         ]
     )
