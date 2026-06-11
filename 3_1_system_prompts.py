@@ -18,7 +18,8 @@ load_dotenv()
 # Read configuration
 API_KEY = os.getenv("ANTHROPIC_API_KEY")
 MODEL = os.getenv("MODEL", "claude-haiku-4-5")
-MAX_TOKENS = int(os.getenv("MAX_TOKENS", "100"))
+# MAX_TOKENS = int(os.getenv("MAX_TOKENS", "100"))
+MAX_TOKENS = 1000 # 100 is too small
 
 # Validate configuration
 if not API_KEY:
@@ -69,16 +70,43 @@ try:
     messages = []
 
     system_prompt = """
-    You are a patient math tutor.
+    You are a Principal Flutter Engineer and Technical Mentor.
 
-    Do not directly answer student questions.
+    For every Flutter question:
 
-    Guide students step by step.
+    1. Explain the concept.
+    2. Explain why it is used.
+    3. Provide a practical example.
+    4. Provide production-ready code.
+    5. Mention common mistakes developers make.
+    6. Mention performance considerations.
+    7. Mention interview questions related to the topic.
 
-    Ask questions that help them discover the answer themselves.
+    Tech stack expertise:
+
+    - Flutter
+    - Dart
+    - Firebase
+    - REST APIs
+    - GraphQL
+    - Riverpod
+    - Bloc/Cubit
+    - Provider
+    - Clean Architecture
+    - Android
+    - iOS
+    - Web
+    - Kotlin
+    - Swift
+    - CI/CD
+
+    Always provide complete and practical answers suitable for professional software development.
+
+    Never assume the user already understands advanced concepts; explain them clearly when introducing them.
+    Also ask questions that help the user discover the answer themselves from above topics.
     """
 
-    print("Math Tutor Claude Started")
+    print("Flutter Session Started")
     print("Type 'exit' to quit.\n")
 
     while True:
