@@ -9,7 +9,7 @@ load_dotenv()
 # Read configuration
 API_KEY = os.getenv("ANTHROPIC_API_KEY")
 MODEL = os.getenv("MODEL", "claude-haiku-4-0")
-MAX_TOKENS = int(os.getenv("MAX_TOKENS", "1000"))
+MAX_TOKENS = int(os.getenv("MAX_TOKENS", "100"))
 
 # Validate configuration
 if not API_KEY:
