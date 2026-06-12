@@ -18,8 +18,7 @@ load_dotenv()
 # Read configuration
 API_KEY = os.getenv("ANTHROPIC_API_KEY")
 MODEL = os.getenv("MODEL", "claude-haiku-4-5")
-# MAX_TOKENS = int(os.getenv("MAX_TOKENS", "100"))
-MAX_TOKENS = 1000 # 100 is too less
+MAX_TOKENS = 1000
 
 # Validate configuration
 if not API_KEY:
@@ -32,21 +31,114 @@ client = Anthropic(
     api_key=API_KEY
 )
 
+SYSTEM_PROMPTS = {
+    "1": """
+        You are a Principal Flutter Engineer.
+
+        Explain Flutter concepts clearly.
+
+        Provide production-ready code.
+
+        Follow Flutter best practices.
+
+        Explain architecture decisions.
+
+        Mention common mistakes and performance considerations.
+
+        Help with Flutter, Dart, Firebase, Android, iOS and REST APIs.
+        """,
+    "2": """
+        You are a Senior Kotlin Compose Multiplatform Engineer.
+
+        Specialize in:
+
+        - Kotlin
+        - Compose Multiplatform
+        - Android
+        - iOS
+        - Ktor
+        - SQLDelight
+        - Koin
+        - MVVM
+        - Clean Architecture
+
+        Always provide production-ready code.
+
+        Explain platform-specific considerations.
+
+        Help debug Android and iOS issues.
+        """,
+    "3": """
+        You are a Senior Python Engineer.
+
+        Specialize in:
+
+        - Python
+        - FastAPI
+        - Flask
+        - Django
+        - SQLAlchemy
+        - Pandas
+        - Automation
+        - APIs
+
+        Provide clean and maintainable code.
+
+        Explain concepts clearly.
+
+        Suggest best practices and optimizations.
+        """,
+    "4": """
+        You are a Senior Node.js Engineer.
+
+        Specialize in:
+
+        - Node.js
+        - Express.js
+        - NestJS
+        - TypeScript
+        - MongoDB
+        - PostgreSQL
+        - REST APIs
+        - WebSockets
+
+        Provide scalable production-ready solutions.
+
+        Follow clean architecture principles.
+
+        Explain performance and security considerations.
+        """,
+    "5": """
+        You are a Senior Java Engineer.
+
+        Specialize in:
+
+        - Java
+        - Spring Boot
+        - Hibernate
+        - JPA
+        - Microservices
+        - REST APIs
+        - Maven
+        - Gradle
+
+        Provide production-ready code.
+
+        Explain design patterns.
+
+        Suggest best practices for scalability and maintenance.
+        """,
+}
+
+DEFAULT_PROMPT = "You are a helpful software engineering assistant."
+
 
 def add_user_message(messages, text):
-    user_message = {
-        "role": "user",
-        "content": text
-    }
-    messages.append(user_message)
+    messages.append({"role": "user", "content": text})
 
 
 def add_assistant_message(messages, text):
-    assistant_message = {
-        "role": "assistant",
-        "content": text
-    }
-    messages.append(assistant_message)
+    messages.append({"role": "assistant", "content": text})
 
 
 def chat(messages, system=None):
@@ -84,120 +176,11 @@ try:
 
     choice = input("Choice : ")
 
-    if choice == "1":
-        system_prompt = """
-        You are a Principal Flutter Engineer.
-
-        Explain Flutter concepts clearly.
-
-        Provide production-ready code.
-
-        Follow Flutter best practices.
-
-        Explain architecture decisions.
-
-        Mention common mistakes and performance considerations.
-
-        Help with Flutter, Dart, Firebase, Android, iOS and REST APIs.
-        """
-
-    elif choice == "2":
-        system_prompt = """
-        You are a Senior Kotlin Compose Multiplatform Engineer.
-
-        Specialize in:
-
-        - Kotlin
-        - Compose Multiplatform
-        - Android
-        - iOS
-        - Ktor
-        - SQLDelight
-        - Koin
-        - MVVM
-        - Clean Architecture
-
-        Always provide production-ready code.
-
-        Explain platform-specific considerations.
-
-        Help debug Android and iOS issues.
-        """
-
-    elif choice == "3":
-        system_prompt = """
-        You are a Senior Python Engineer.
-
-        Specialize in:
-
-        - Python
-        - FastAPI
-        - Flask
-        - Django
-        - SQLAlchemy
-        - Pandas
-        - Automation
-        - APIs
-
-        Provide clean and maintainable code.
-
-        Explain concepts clearly.
-
-        Suggest best practices and optimizations.
-        """
-
-    elif choice == "4":
-        system_prompt = """
-        You are a Senior Node.js Engineer.
-
-        Specialize in:
-
-        - Node.js
-        - Express.js
-        - NestJS
-        - TypeScript
-        - MongoDB
-        - PostgreSQL
-        - REST APIs
-        - WebSockets
-
-        Provide scalable production-ready solutions.
-
-        Follow clean architecture principles.
-
-        Explain performance and security considerations.
-        """
-
-    elif choice == "5":
-        system_prompt = """
-        You are a Senior Java Engineer.
-
-        Specialize in:
-
-        - Java
-        - Spring Boot
-        - Hibernate
-        - JPA
-        - Microservices
-        - REST APIs
-        - Maven
-        - Gradle
-
-        Provide production-ready code.
-
-        Explain design patterns.
-
-        Suggest best practices for scalability and maintenance.
-        """
-
-    elif choice == "6":
+    if choice == "6":
         print("\nEnter Custom System Prompt:\n")
         system_prompt = input("> ")
-
     else:
-        system_prompt = """
-        You are a helpful software engineering assistant.
-        """
+        system_prompt = SYSTEM_PROMPTS.get(choice, DEFAULT_PROMPT)
 
     print("\n===================================")
     print("Chat Started")
@@ -214,67 +197,41 @@ try:
 
         userQuestion = input("Que : ")
 
-        if userQuestion.lower() == "/exit":
-            print("\nGoodbye!")
-            break
+        match userQuestion.lower():
 
-        elif userQuestion.lower() == "/system":
+            case "/exit":
+                print("\nGoodbye!")
+                break
 
-            print("\n===== Current System Prompt =====\n")
-            print(system_prompt)
-            print()
-            continue
+            case "/system":
+                print("\n===== Current System Prompt =====\n")
+                print(system_prompt)
+                print()
 
-        elif userQuestion.lower() == "/clear":
+            case "/clear":
+                messages.clear()
+                print("\nConversation history cleared.\n")
 
-            messages.clear()
+            case "/history":
+                print(f"\nStored Messages : {len(messages)}\n")
 
-            print("\nConversation history cleared.\n")
-            continue
+            case "/set":
+                print("\nEnter New System Prompt:\n")
+                system_prompt = input("> ")
+                print("\nSystem Prompt Updated.\n")
 
-        elif userQuestion.lower() == "/history":
+            case _:
+                add_user_message(messages, userQuestion)
 
-            print(
-                f"\nStored Messages : {len(messages)}\n"
-            )
-            continue
+                answer = chat(messages, system=system_prompt)
 
-        elif userQuestion.lower() == "/set":
+                add_assistant_message(messages, answer)
 
-            print(
-                "\nEnter New System Prompt:\n"
-            )
-
-            system_prompt = input("> ")
-
-            print(
-                "\nSystem Prompt Updated.\n"
-            )
-
-            continue
-
-        add_user_message(
-            messages,
-            userQuestion
-        )
-
-        answer = chat(
-            messages,
-            system=system_prompt
-        )
-
-        add_assistant_message(
-            messages,
-            answer
-        )
-
-        print("\n===== Claude Response =====\n")
-        print(answer)
-        print()
+                print("\n===== Claude Response =====\n")
+                print(answer)
+                print()
 
 except Exception as e:
 
     print("\n===== Error =====\n")
-    print(
-        f"Failed to call Anthropic API: {e}"
-    )
+    print(f"Failed to call Anthropic API: {e}")

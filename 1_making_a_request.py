@@ -16,7 +16,7 @@ load_dotenv()
 
 # Read configuration
 API_KEY = os.getenv("ANTHROPIC_API_KEY")
-MODEL = os.getenv("MODEL", "claude-haiku-4-0")
+MODEL = os.getenv("MODEL", "claude-haiku-4-5")
 MAX_TOKENS = int(os.getenv("MAX_TOKENS", "100"))
 
 # Validate configuration
@@ -39,7 +39,7 @@ try:
         messages=[
             {
                 "role": "user",
-                "content": f"${userQuestion} Answer in one sentence."
+                "content": f"{userQuestion} Answer in one sentence."
             }
         ]
     )

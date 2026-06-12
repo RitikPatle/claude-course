@@ -18,8 +18,7 @@ load_dotenv()
 # Read configuration
 API_KEY = os.getenv("ANTHROPIC_API_KEY")
 MODEL = os.getenv("MODEL", "claude-haiku-4-5")
-# MAX_TOKENS = int(os.getenv("MAX_TOKENS", "100"))
-MAX_TOKENS = 1000 # 100 is too small
+MAX_TOKENS = 1000
 
 # Validate configuration
 if not API_KEY:
@@ -34,19 +33,11 @@ client = Anthropic(
 
 
 def add_user_message(messages, text):
-    user_message = {
-        "role": "user",
-        "content": text
-    }
-    messages.append(user_message)
+    messages.append({"role": "user", "content": text})
 
 
 def add_assistant_message(messages, text):
-    assistant_message = {
-        "role": "assistant",
-        "content": text
-    }
-    messages.append(assistant_message)
+    messages.append({"role": "assistant", "content": text})
 
 
 def chat(messages, system=None):

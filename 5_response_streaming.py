@@ -33,26 +33,16 @@ client = Anthropic(
 
 
 def add_user_message(messages, text):
-    user_message = {
-        "role": "user",
-        "content": text
-    }
-
-    messages.append(user_message)
+    messages.append({"role": "user", "content": text})
 
 
 def add_assistant_message(messages, text):
-    assistant_message = {
-        "role": "assistant",
-        "content": text
-    }
-
-    messages.append(assistant_message)
+    messages.append({"role": "assistant", "content": text})
 
 
 def stream_chat(messages):
 
-    complete_response = ""
+    chunks = []
 
     with client.messages.stream(
         model=MODEL,
@@ -63,14 +53,12 @@ def stream_chat(messages):
         print("\n===== Claude Response =====\n")
 
         for text in stream.text_stream:
-
             print(text, end="", flush=True)
-
-            complete_response += text
+            chunks.append(text)
 
         print("\n")
 
-    return complete_response
+    return "".join(chunks)
 
 
 try:

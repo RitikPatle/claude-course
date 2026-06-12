@@ -20,8 +20,7 @@ load_dotenv()
 # Read configuration
 API_KEY = os.getenv("ANTHROPIC_API_KEY")
 MODEL = os.getenv("MODEL", "claude-haiku-4-5")
-# MAX_TOKENS = int(os.getenv("MAX_TOKENS", "1000"))
-MAX_TOKENS = 1000 # 100 is too less
+MAX_TOKENS = 1000
 
 # Validate configuration
 if not API_KEY:
@@ -36,17 +35,11 @@ client = Anthropic(
 
 
 def add_user_message(messages, text):
-    messages.append({
-        "role": "user",
-        "content": text
-    })
+    messages.append({"role": "user", "content": text})
 
 
 def add_assistant_message(messages, text):
-    messages.append({
-        "role": "assistant",
-        "content": text
-    })
+    messages.append({"role": "assistant", "content": text})
 
 
 def chat(
@@ -87,23 +80,14 @@ try:
 
     choice = input("Choice : ")
 
-    if choice == "1":
-        temperature = 0.0
-
-    elif choice == "2":
-        temperature = 0.2
-
-    elif choice == "3":
-        temperature = 0.5
-
-    elif choice == "4":
-        temperature = 0.8
-
-    elif choice == "5":
-        temperature = 1.0
-
-    else:
-        temperature = 0.5
+    TEMPERATURE_MAP = {
+        "1": 0.0,
+        "2": 0.2,
+        "3": 0.5,
+        "4": 0.8,
+        "5": 1.0,
+    }
+    temperature = TEMPERATURE_MAP.get(choice, 0.5)
 
     print(
         f"\nTemperature Selected: {temperature}\n"

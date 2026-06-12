@@ -32,27 +32,11 @@ client = Anthropic(
 
 
 def add_user_message(messages, text):
-
-    user_message = {
-        "role": "user",
-        "content": text
-    }
-
-    messages.append(
-        user_message
-    )
+    messages.append({"role": "user", "content": text})
 
 
 def add_assistant_message(messages, text):
-
-    assistant_message = {
-        "role": "assistant",
-        "content": text
-    }
-
-    messages.append(
-        assistant_message
-    )
+    messages.append({"role": "assistant", "content": text})
 
 
 def chat(
@@ -130,29 +114,18 @@ Task:
 
     messages = []
 
-    add_user_message(
-        messages,
-        prompt
-    )
+    add_user_message(messages, prompt)
 
-    output = chat(
-        messages=messages,
-        temperature=0.0
-    )
+    output = chat(messages=messages, temperature=0.0)
 
     return output
 
 
 def run_test_case(test_case):
 
-    print(
-        f"Running: "
-        f"{test_case['task']}"
-    )
+    print(f"Running: {test_case['task']}")
 
-    output = run_prompt(
-        test_case
-    )
+    output = run_prompt(test_case)
 
     # Placeholder grading
     score = 10
@@ -165,20 +138,7 @@ def run_test_case(test_case):
 
 
 def run_eval(dataset):
-
-    results = []
-
-    for test_case in dataset:
-
-        result = run_test_case(
-            test_case
-        )
-
-        results.append(
-            result
-        )
-
-    return results
+    return [run_test_case(test_case) for test_case in dataset]
 
 
 def save_eval_results(results):
@@ -198,23 +158,14 @@ def save_eval_results(results):
 
 def generate_scores(results):
 
-    scores = [
-        result["score"]
-        for result in results
-    ]
+    scores = [result["score"] for result in results]
+    total = len(scores)
 
     summary = {
-        "total_test_cases":
-            len(scores),
-
-        "average_score":
-            sum(scores) / len(scores),
-
-        "highest_score":
-            max(scores),
-
-        "lowest_score":
-            min(scores)
+        "total_test_cases": total,
+        "average_score": sum(scores) / total if total > 0 else 0,
+        "highest_score": max(scores) if scores else 0,
+        "lowest_score": min(scores) if scores else 0,
     }
 
     with open(
@@ -235,44 +186,19 @@ def generate_scores(results):
 def generate_report(summary):
 
     report = {
-
-        "evaluation_name":
-            "Prompt Evaluation V1",
-
-        "model":
-            MODEL,
-
-        "dataset_size":
-            summary["total_test_cases"],
-
-        "average_score":
-            summary["average_score"],
-
-        "summary":
-            (
-                "Claude successfully "
-                "generated outputs for all "
-                "test cases. Placeholder "
-                "grading is currently used."
-            ),
-
+        "evaluation_name": "Prompt Evaluation V1",
+        "model": MODEL,
+        "dataset_size": summary["total_test_cases"],
+        "average_score": summary["average_score"],
+        "summary": (
+            "Claude successfully generated outputs for all test cases. "
+            "Placeholder grading is currently used."
+        ),
         "recommendations": [
-
-            (
-                "Implement an AI grader"
-            ),
-
-            (
-                "Increase dataset size"
-            ),
-
-            (
-                "Compare prompt versions"
-            ),
-
-            (
-                "Track evaluation history"
-            )
+            "Implement an AI grader",
+            "Increase dataset size",
+            "Compare prompt versions",
+            "Track evaluation history",
         ]
     }
 
@@ -319,25 +245,15 @@ try:
         "\n===== Evaluation Complete =====\n"
     )
 
-    print(
-        "Generated Files:\n"
-    )
+    generated_files = [
+        "generated_materials/dataset.json",
+        "generated_materials/eval_results.json",
+        "generated_materials/scores.json",
+        "generated_materials/report.json",
+    ]
 
-    print(
-        "generated_materials/dataset.json"
-    )
-
-    print(
-        "generated_materials/eval_results.json"
-    )
-
-    print(
-        "generated_materials/scores.json"
-    )
-
-    print(
-        "generated_materials/report.json"
-    )
+    print("Generated Files:\n")
+    print("\n".join(generated_files))
 
 except Exception as e:
 
