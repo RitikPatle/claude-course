@@ -1,8 +1,4 @@
-# Model-based grading is an evaluation technique where an AI model is used to assess the quality of another model's output and assign a score, typically between 1 and 10, along with reasoning, strengths, and weaknesses.
-# Unlike code graders that rely on fixed programmatic rules or human graders that require manual review, model graders can evaluate subjective qualities such as instruction following, completeness, helpfulness, relevance, and overall response quality.
-# The process involves sending the original task and the generated solution to a grading prompt, asking the model to return structured feedback in JSON format.
-# This grading result is then integrated into the evaluation pipeline, allowing each test case to receive a measurable score and explanation.
-# By averaging scores across a dataset, developers can objectively compare prompt versions, identify weaknesses, and track improvements over time while automating much of the evaluation process.
+# Code-based grading validates the raw syntax of model output (Python, JSON, or Regex) using built-in parsers, then averages that binary pass/fail score with a model-based quality score to produce a final grade that rewards both correctness and substance.
 
 
 import os
@@ -11,6 +7,8 @@ import json
 from dotenv import load_dotenv
 from anthropic import Anthropic
 from statistics import mean
+import re
+import ast
 
 # Load variables from .env
 load_dotenv()
@@ -76,52 +74,51 @@ def ensure_generated_materials_folder():
     )
 
 
-def create_dataset():
+def generate_dataset():
+    prompt = """
+Generate a evaluation dataset for a prompt evaluation. The dataset will be used to evaluate prompts
+that generate Python, JSON, or Regex specifically for AWS-related tasks. Generate an array of JSON objects,
+each representing task that requires Python, JSON, or a Regex to complete.
 
-    dataset = [
-        {
-            "task": "Write a Python function to reverse a string"
-        },
-        {
-            "task": "Create a Python function that validates email addresses"
-        },
-        {
-            "task": "Generate a JSON object representing a user profile"
-        }
-    ]
+Example output:
+```json
+[
+    {
+        "task": "Description of task",
+        "format": "json" or "python" or "regex"
+    },
+    ...additional
+]
+```
 
-    with open(
-        "generated_materials/dataset.json",
-        "w",
-        encoding="utf-8"
-    ) as f:
+* Focus on tasks that can be solved by writing a single Python function, a single JSON object, or a regular expression.
+* Focus on tasks that do not require writing much code
 
-        json.dump(
-            dataset,
-            f,
-            indent=4
-        )
+Please generate 3 objects.
+"""
 
-    return dataset
+    messages = []
+    add_user_message(messages, prompt)
+    add_assistant_message(messages, "```json")
+    text = chat(messages, stop_sequences=["```"])
+    return json.loads(text)
 
 
 def run_prompt(test_case):
 
     prompt = f"""
-Please solve the following task.
-
-Return a complete solution.
-
-Task:
+Please solve the following task:
 
 {test_case["task"]}
+
+* Respond only with Python, JSON, or a plain Regex
+* Do not add any comments or commentary or explanation
 """
 
     messages = []
-
     add_user_message(messages, prompt)
-
-    output = chat(messages=messages, temperature=0.0)
+    add_assistant_message(messages, "```code")
+    output = chat(messages=messages, temperature=0.0, stop_sequences=["```"])
 
     return output
 
@@ -162,17 +159,54 @@ Example response shape:
     eval_text = "{" + chat(messages)
     return json.loads(eval_text)
 
+def validate_json(text):
+    try:
+        json.loads(text.strip())
+        return 10
+    except json.JSONDecodeError:
+        return 0
+
+
+def validate_python(text):
+    try:
+        ast.parse(text.strip())
+        return 10
+    except SyntaxError:
+        return 0
+
+
+def validate_regex(text):
+    try:
+        re.compile(text.strip())
+        return 10
+    except re.error:
+        return 0
+
+
+def grade_syntax(response, test_case):
+    format = test_case["format"]
+    if format == "json":
+        return validate_json(response)
+    elif format == "python":
+        return validate_python(response)
+    else:
+        return validate_regex(response)
+
 def run_test_case(test_case):
 
     print(f"Running: {test_case['task']}")
 
     output = run_prompt(test_case)
     grade = grade_by_model(test_case, output)
-    
+
+    model_score = grade["score"]
+    syntax_score = grade_syntax(output, test_case)
+    score = (model_score + syntax_score) / 2
+
     return {
         "test_case": test_case,
         "output": output,
-        "score": grade["score"],
+        "score": score,
         "reasoning": grade["reasoning"],
         "strengths": grade["strengths"],
         "weaknesses": grade["weaknesses"]
@@ -275,7 +309,10 @@ try:
 
     ensure_generated_materials_folder()
 
-    dataset = create_dataset()
+    dataset = generate_dataset()
+
+    with open("generated_materials/dataset.json", "w", encoding="utf-8") as f:
+        json.dump(dataset, f, indent=4)
 
     results = run_eval(
         dataset
