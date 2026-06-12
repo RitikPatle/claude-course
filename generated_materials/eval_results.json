@@ -1,0 +1,23 @@
+[
+    {
+        "test_case": {
+            "task": "Write a Python function to reverse a string"
+        },
+        "output": "# Python Function to Reverse a String\n\nHere's a complete solution with multiple approaches:\n\n```python\n# Method 1: Using String Slicing (Most Pythonic)\ndef reverse_string_slicing(s):\n    \"\"\"Reverse a string using slicing.\"\"\"\n    return s[::-1]\n\n\n# Method 2: Using a Loop\ndef reverse_string_loop(s):\n    \"\"\"Reverse a string using a for loop.\"\"\"",
+        "score": 10
+    },
+    {
+        "test_case": {
+            "task": "Create a Python function that validates email addresses"
+        },
+        "output": "# Email Validation Function\n\nHere's a complete solution with multiple approaches:\n\n## Solution 1: Using Regular Expression (Recommended)\n\n```python\nimport re\n\ndef validate_email(email):\n    \"\"\"\n    Validates an email address using regex pattern.\n    \n    Args:\n        email (str): The email address to validate\n        \n    Returns:\n        bool: True if valid, False otherwise\n    \"\"\"\n    # RFC 5322 ",
+        "score": 10
+    },
+    {
+        "test_case": {
+            "task": "Generate a JSON object representing a user profile"
+        },
+        "output": "# User Profile JSON Object\n\n```json\n{\n  \"user_id\": \"USR_12345\",\n  \"username\": \"john_doe\",\n  \"email\": \"john.doe@example.com\",\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"profile_picture\": \"https://example.com/images/john_doe.jpg\",\n  \"bio\": \"Software developer and",
+        "score": 10
+    }
+]

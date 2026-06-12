@@ -1,0 +1,11 @@
+[
+    {
+        "task": "Write a Python function to reverse a string"
+    },
+    {
+        "task": "Create a Python function that validates email addresses"
+    },
+    {
+        "task": "Generate a JSON object representing a user profile"
+    }
+]
