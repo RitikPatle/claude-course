@@ -1,8 +1,8 @@
 {
     "evaluation_name": "Prompt Evaluation V1",
-    "model": "claude-haiku-4-5",
+    "model": "claude-sonnet-4-5",
     "dataset_size": 3,
-    "average_score": 10.0,
+    "average_score": 6.333333333333333,
     "summary": "Claude successfully generated outputs for all test cases. Placeholder grading is currently used.",
     "recommendations": [
         "Implement an AI grader",
