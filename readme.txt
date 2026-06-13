@@ -48,6 +48,8 @@ Example :
 ANTHROPIC_API_KEY=sk-ant-api03-xyz
 MODEL=claude-haiku-4-5
 MAX_TOKENS=100
+VOYAGE_API_KEY=your_voyage_api_key_here
+THINKING_MODEL=claude-sonnet-4-6
 
 ------------------------------
 Course Files
